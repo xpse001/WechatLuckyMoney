@@ -393,7 +393,7 @@ public class XposedInit implements IXposedHookLoadPackage {
 
                                 XposedBridge.log("Xposed:" + "redPackContent: " + content);
                                 RedPackContent redPackContent = XmlToBeanUtil.convertXmlToBean(content, RedPackContent.class);
-                                XposedBridge.log("Xposed:" + "redPackContent2: " + redPackContent);
+                                //XposedBridge.log("Xposed:" + "redPackContent2: " + redPackContent);
 
                                 String url = redPackContent.getAppMsg().getUrl();
                                 Uri parse = Uri.parse(url);
