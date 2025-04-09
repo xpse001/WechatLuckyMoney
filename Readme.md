@@ -1,3 +1,7 @@
+# WechatLuckyMoney
+xposed微信抢红包，适配微信最新版本
+
+
 feature_user
 ├── data
 │   ├── UserRepositoryImpl.kt   // 实现数据获取
