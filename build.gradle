@@ -1,0 +1,25 @@
+// build.gradle (根项目)
+buildscript {
+    repositories {
+        google() // 确保已添加 Google 仓库
+        mavenCentral()
+        maven {
+            url 'https://maven.aliyun.com/repository/public/'
+        }
+        maven {
+            url 'https://api.xposed.info/'
+        }
+
+
+    }
+    dependencies {
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.48' // 添加 Hilt 插件
+        // 其他 classpath 依赖...
+    }
+}
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.jetbrains.kotlin.android) apply false
+}
