@@ -368,10 +368,12 @@ public class XposedInit implements IXposedHookLoadPackage {
 
                         if (type == 436207665 || type == 469762097) {
 
-//                            for (String key : contentValues.keySet()) {
-//                                XposedBridge.log("Xposed:" + "Key: " + key + " | Value: " + contentValues.get(key));
-//                            }
+                            for (String key : contentValues.keySet()) {
+                                XposedBridge.log("Xposed:" + "Key: " + key + " | Value: " + contentValues.get(key));
+                            }
                             // 提取关键参数
+
+                            int isSend = contentValues.getAsInteger("isSend");
                             String sendId = contentValues.getAsString("sendid");
                             String nativeUrl = contentValues.getAsString("native_url");
                             //keyUsername
@@ -390,6 +392,12 @@ public class XposedInit implements IXposedHookLoadPackage {
                                 return;
                             }
                             try {
+                                //别人发的,格式有所变化，需要提取XML
+                                if (isSend == 0) {
+                                    // 1. 分离前缀和XML内容
+                                    String[] parts = content.split(":", 2);
+                                    content = parts[1].trim();
+                                }
 
                                 XposedBridge.log("Xposed:" + "redPackContent: " + content);
                                 RedPackContent redPackContent = XmlToBeanUtil.convertXmlToBean(content, RedPackContent.class);
