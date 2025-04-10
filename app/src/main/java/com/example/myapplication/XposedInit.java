@@ -263,13 +263,14 @@ public class XposedInit implements IXposedHookLoadPackage {
                         if (true) {
                             Thread.sleep(1000);
                         }
-                        //初始化D1
-                        if (currentActivity != null) {
-                            //拆红包方法
-                            callMethod(d1, "d", modele2, false);
-                        } else {
-                            XposedBridge.log("currentActivity is null: ");
-                        }
+                        //拆红包方法
+                        callMethod(d1, "d", modele2, false);
+//                        //初始化D1
+//                        if (currentActivity != null) {
+//
+//                        } else {
+//                            XposedBridge.log("currentActivity is null: ");
+//                        }
 
 
                         super.afterHookedMethod(param);
@@ -433,7 +434,7 @@ public class XposedInit implements IXposedHookLoadPackage {
                                     currentActivity = activity;
                                 }
                                 android.content.Context context = (Context) callStaticMethod(findClass("com.tencent.mm.sdk.platformtools.MMApplicationContext", classLoader), "getContext");
-                                final Object d1 = newInstance(findClass("com.tencent.mm.plugin.luckymoney.model.d1", classLoader), context, currentActivity);
+                                final Object d1 = newInstance(findClass("com.tencent.mm.plugin.luckymoney.model.d1", classLoader), context, null);
                                 callMethod(d1, "d", j2, false);
 
                             } catch (Exception e) {
