@@ -23,8 +23,7 @@ jobs:
       steps:
       # 1. 检出代码
       - name: Checkout code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
 
       - name: Get last commit message
         id: get_commit_message
@@ -37,7 +36,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app-release.apk
-          path: .  # 默认下载到当前目录
+          path: .
+          
       # 2. 创建并推送新标签
       - name: Push new tag
         env:
