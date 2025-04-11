@@ -34,3 +34,4 @@ jobs:
       with:
         name: app-release.apk
         path: app/release/app-release.apk  # 根据实际路径调整
+        overwrite: true  # 关键参数，跳过压缩
