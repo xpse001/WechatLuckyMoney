@@ -34,6 +34,12 @@ jobs:
           commit_message=$(git log -1 --pretty=format:"%s")
           echo "commit_message=$commit_message" >> $GITHUB_ENV
 
+    # 1. 下载之前构建的 APK（使用 v4 版本）
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release.apk
+          path: .  # 默认下载到当前目录
       # 2. 创建并推送新标签
       - name: Push new tag
         env:
