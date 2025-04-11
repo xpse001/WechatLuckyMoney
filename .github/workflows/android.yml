@@ -28,9 +28,9 @@ jobs:
     - name: Build Release APK
       run: ./gradlew assembleRelease
 
-    # 5. 上传 APK 为 Artifact（临时存储）
+    # 5. 上传 APK 到 Artifact（使用 v4 版本）
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: app-release.apk
-        path: app/build/outputs/apk/release/app-release.apk  # 根据你的项目路径调整
+        path: app/build/outputs/apk/release/app-release.apk  # 根据实际路径调整
