@@ -59,5 +59,6 @@ jobs:
           body: ${{ env.commit_message }}
           draft: false
           prerelease: false
+          files: app-release.apk  # 附加 APK 到 Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
