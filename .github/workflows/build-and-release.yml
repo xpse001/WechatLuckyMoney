@@ -1,0 +1,57 @@
+# 文件名: build-and-release.yml
+name: Build and Release
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'The tag name (e.g., v1.0.0)'
+        required: true
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      # 1. 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. 设置 JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      # 3. 构建 APK
+      - name: Build APK
+        run: ./gradlew clean assembleRelease
+
+      # 4. 验证 APK 路径
+      - name: Verify APK Path
+        run: ls -l app/release/app-release.apk
+
+      # 5. 上传 APK
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.apk
+          path: app/release/app-release.apk
+          overwrite: true  # 跳过压缩
+
+      # 6. 创建标签并发布 Release
+      - name: Create Tag and Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.tag_name }}
+          name: Release ${{ github.event.inputs.tag_name }}
+          body: "Release created by GitHub Actions"
+          files: app/release/app-release.apk  # 直接引用本地路径
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
