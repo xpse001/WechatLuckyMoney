@@ -223,16 +223,13 @@ public class XposedInit implements IXposedHookLoadPackage {
 
                         Object thisObject = param.thisObject;
                         Field[] fields = thisObject.getClass().getDeclaredFields();
-                        XposedBridge.log("thisObject： " + thisObject.getClass().getName());
-                        for (Field field : fields) {
-                            field.setAccessible(true); // 突破私有权限
-                            Object value = field.get(thisObject);
-                            XposedBridge.log("j2方法 field： " + field.getName() + ",value=" + value);
-                        }
-
-
+//                        XposedBridge.log("thisObject： " + thisObject.getClass().getName());
+//                        for (Field field : fields) {
+//                            field.setAccessible(true); // 突破私有权限
+//                            Object value = field.get(thisObject);
+//                            XposedBridge.log("j2方法 field： " + field.getName() + ",value=" + value);
+//                        }
                         if (redPackDTO == null) {
-                            XposedBridge.log("redPackDTO is null: ");
                             return;
                         }
 

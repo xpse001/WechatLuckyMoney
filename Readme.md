@@ -1,6 +1,7 @@
 # WechatLuckyMoney
 xposed微信抢红包，适配微信最新版本
 
+
 feature_user
 ├── data
 │   ├── UserRepositoryImpl.kt   // 实现数据获取
@@ -33,3 +34,10 @@ data class UserDto(val id: Int, val name: String)
 
 // domain/model/User.kt（业务层模型）
 data class User(val userId: Int, val userName: String)
+
+
+
+### 发起网络请求类:
+search: NetSceneReceiveLuckyMoney request
+
+
