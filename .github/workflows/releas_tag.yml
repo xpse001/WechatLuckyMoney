@@ -1,0 +1,56 @@
+# This is a basic workflow to help you get started with Actions
+
+name: 打标签
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'The tag name to create (e.g., v1.2.3)'
+        required: true
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  generate_tag:
+      runs-on: ubuntu-latest
+      permissions:
+        contents: write  # 添加写权限
+      steps:
+      # 1. 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+
+      - name: Get last commit message
+        id: get_commit_message
+        run: |
+          commit_message=$(git log -1 --pretty=format:"%s")
+          echo "commit_message=$commit_message" >> $GITHUB_ENV
+
+      # 2. 创建并推送新标签
+      - name: Push new tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag_name=${{ inputs.tag_name }}
+          git tag "$tag_name"
+          git push origin "$tag_name"
+          echo "New tag_name: $tag_name"
+          echo "new_tag=$tag_name" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.new_tag }} 
+          release_name: Release ${{ env.new_tag  }}
+          body: ${{ env.commit_message }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
