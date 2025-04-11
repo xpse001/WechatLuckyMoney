@@ -19,7 +19,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://rjy-webserver-test.mireal-tech.cn:48443/")
+            .baseUrl("https://xxx:8008/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

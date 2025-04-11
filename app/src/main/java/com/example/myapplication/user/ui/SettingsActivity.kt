@@ -42,6 +42,7 @@ class SettingsViewModel @Inject constructor(
     private val sharedPreferences =
         context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
 
+
     fun getSavedText(): String {
         var text = sharedPreferences.getString("saved_text", "1")
         Log.d("SAVE", "getSavedText: $text")
@@ -69,7 +70,7 @@ fun SettingsScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
 
 
-// 使用本地状态暂存输入内容
+    // 使用本地状态暂存输入内容
     var localText by remember { mutableStateOf(viewModel.getSavedText()) }
     Column(
         modifier = Modifier
