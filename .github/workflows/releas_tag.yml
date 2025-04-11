@@ -35,7 +35,7 @@ jobs:
       - name: Download APK
         uses: actions/download-artifact@v4
         with:
-          name: app-release.apk
+          name: app-release.apk.zip
           path: .
           
       # 2. 创建并推送新标签
