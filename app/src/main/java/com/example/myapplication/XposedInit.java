@@ -88,36 +88,36 @@ public class XposedInit implements IXposedHookLoadPackage {
 
 
         // 监控int i15, int i16, String str, String str2, String str3, String str4, String str5, String str6, String str7
-        XposedHelpers.findAndHookConstructor("com.tencent.mm.plugin.luckymoney.model.e2",
-                classLoader,
-                int.class,
-                int.class,
-                String.class,
-                String.class,
-                String.class,
-                String.class,
-                String.class,
-                String.class,
-                String.class,
-                String.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) {
-                        // 构造方法执行前
-                        XposedBridge.log("即将创建对象，参数: " + Arrays.toString(param.args));
-
-                        // 打印堆栈
-                        //printFilteredStackTrace();
-                    }
-
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) {
-                        // 构造方法执行后
-                        XposedBridge.log("对象创建完成，实例: " + param.thisObject);
-                        // 获取构造后的对象属性（如果有getter）
-                        Object instance = param.thisObject;
-                    }
-                });
+//        XposedHelpers.findAndHookConstructor("com.tencent.mm.plugin.luckymoney.model.e2",
+//                classLoader,
+//                int.class,
+//                int.class,
+//                String.class,
+//                String.class,
+//                String.class,
+//                String.class,
+//                String.class,
+//                String.class,
+//                String.class,
+//                String.class,
+//                new XC_MethodHook() {
+//                    @Override
+//                    protected void beforeHookedMethod(MethodHookParam param) {
+//                        // 构造方法执行前
+//                        XposedBridge.log("即将创建对象，参数: " + Arrays.toString(param.args));
+//
+//                        // 打印堆栈
+//                        //printFilteredStackTrace();
+//                    }
+//
+//                    @Override
+//                    protected void afterHookedMethod(MethodHookParam param) {
+//                        // 构造方法执行后
+//                        XposedBridge.log("对象创建完成，实例: " + param.thisObject);
+//                        // 获取构造后的对象属性（如果有getter）
+//                        Object instance = param.thisObject;
+//                    }
+//                });
 
     }
 
@@ -223,16 +223,13 @@ public class XposedInit implements IXposedHookLoadPackage {
 
                         Object thisObject = param.thisObject;
                         Field[] fields = thisObject.getClass().getDeclaredFields();
-                        XposedBridge.log("thisObject： " + thisObject.getClass().getName());
-                        for (Field field : fields) {
-                            field.setAccessible(true); // 突破私有权限
-                            Object value = field.get(thisObject);
-                            XposedBridge.log("j2方法 field： " + field.getName() + ",value=" + value);
-                        }
-
-
+//                        XposedBridge.log("thisObject： " + thisObject.getClass().getName());
+//                        for (Field field : fields) {
+//                            field.setAccessible(true); // 突破私有权限
+//                            Object value = field.get(thisObject);
+//                            XposedBridge.log("j2方法 field： " + field.getName() + ",value=" + value);
+//                        }
                         if (redPackDTO == null) {
-                            XposedBridge.log("redPackDTO is null: ");
                             return;
                         }
 
@@ -263,13 +260,14 @@ public class XposedInit implements IXposedHookLoadPackage {
                         if (true) {
                             Thread.sleep(1000);
                         }
-                        //初始化D1
-                        if (currentActivity != null) {
-                            //拆红包方法
-                            callMethod(d1, "d", modele2, false);
-                        } else {
-                            XposedBridge.log("currentActivity is null: ");
-                        }
+                        //拆红包方法
+                        callMethod(d1, "d", modele2, false);
+//                        //初始化D1
+//                        if (currentActivity != null) {
+//
+//                        } else {
+//                            XposedBridge.log("currentActivity is null: ");
+//                        }
 
 
                         super.afterHookedMethod(param);
@@ -368,10 +366,12 @@ public class XposedInit implements IXposedHookLoadPackage {
 
                         if (type == 436207665 || type == 469762097) {
 
-//                            for (String key : contentValues.keySet()) {
-//                                XposedBridge.log("Xposed:" + "Key: " + key + " | Value: " + contentValues.get(key));
-//                            }
+                            for (String key : contentValues.keySet()) {
+                                XposedBridge.log("Xposed:" + "Key: " + key + " | Value: " + contentValues.get(key));
+                            }
                             // 提取关键参数
+
+                            int isSend = contentValues.getAsInteger("isSend");
                             String sendId = contentValues.getAsString("sendid");
                             String nativeUrl = contentValues.getAsString("native_url");
                             //keyUsername
@@ -390,10 +390,15 @@ public class XposedInit implements IXposedHookLoadPackage {
                                 return;
                             }
                             try {
+                                //别人发的,格式有所变化，需要提取XML
+                                if (isSend == 0) {
+                                    // 1. 分离前缀和XML内容
+                                    String[] parts = content.split(":", 2);
+                                    content = parts[1].trim();
+                                }
 
-                                XposedBridge.log("Xposed:" + "redPackContent: " + content);
+//                                XposedBridge.log("Xposed:" + "redPackContent: " + content);
                                 RedPackContent redPackContent = XmlToBeanUtil.convertXmlToBean(content, RedPackContent.class);
-                                //XposedBridge.log("Xposed:" + "redPackContent2: " + redPackContent);
 
                                 String url = redPackContent.getAppMsg().getUrl();
                                 Uri parse = Uri.parse(url);
@@ -407,13 +412,13 @@ public class XposedInit implements IXposedHookLoadPackage {
                                 nickName = (String) callStaticMethod(findClass("kd0.u0", classLoader), "l");
 
 
-                                XposedBridge.log("Xposed:" + "head=" + headImg);
-                                XposedBridge.log("Xposed:" + "nickName=" + nickName);
-                                XposedBridge.log("Xposed:" + "msgType=" + msgType);
-                                XposedBridge.log("Xposed:" + "channelId=" + channelId);
-                                XposedBridge.log("Xposed:" + "sendId=" + sendId);
-                                XposedBridge.log("Xposed:" + "nativeUrl=" + nativeUrl);
-                                XposedBridge.log("Xposed:" + "talker=" + talker);
+//                                XposedBridge.log("Xposed:" + "head=" + headImg);
+//                                XposedBridge.log("Xposed:" + "nickName=" + nickName);
+//                                XposedBridge.log("Xposed:" + "msgType=" + msgType);
+//                                XposedBridge.log("Xposed:" + "channelId=" + channelId);
+//                                XposedBridge.log("Xposed:" + "sendId=" + sendId);
+//                                XposedBridge.log("Xposed:" + "nativeUrl=" + nativeUrl);
+//                                XposedBridge.log("Xposed:" + "talker=" + talker);
                                 redPackDTO = new RedPackDTO(sendId, nativeUrl, talker, headImg, nickName, sessionUserName, ver, timingIdentifier, left_button_continue, channelId, msgType, keyWay);
 
                                 //查询红包信息new com.tencent.mm.plugin.luckymoney.model.j2(1, i15, this.N, this.P, getIntent().getIntExtra("key_way", 0), "v1.0", stringExtra)
@@ -425,7 +430,7 @@ public class XposedInit implements IXposedHookLoadPackage {
                                     currentActivity = activity;
                                 }
                                 android.content.Context context = (Context) callStaticMethod(findClass("com.tencent.mm.sdk.platformtools.MMApplicationContext", classLoader), "getContext");
-                                final Object d1 = newInstance(findClass("com.tencent.mm.plugin.luckymoney.model.d1", classLoader), context, currentActivity);
+                                final Object d1 = newInstance(findClass("com.tencent.mm.plugin.luckymoney.model.d1", classLoader), context, null);
                                 callMethod(d1, "d", j2, false);
 
                             } catch (Exception e) {

@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -17,10 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +41,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import com.example.myapplication.user.ui.SettingsScreen
 import com.example.myapplication.user.ui.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,15 +54,38 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
 
+    @SuppressLint("UnrememberedGetBackStackEntry")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+
+
             MyApplicationTheme {
-                Greeting(
-                    name = "Android",
-                    modifier = Modifier.fillMaxSize()
-                )
+                val navController = rememberNavController()
+                NavHost(navController, startDestination = "main") {
+                    composable("main") {
+                        Greeting(
+                            navController,
+                            name = "Android",
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    composable("settings") {
+                        val backStackEntry =
+                            remember { navController.getBackStackEntry("settings") }
+                        SettingsScreen(
+                            navController = navController,
+                            viewModel = hiltViewModel(backStackEntry)
+                        )
+                    }
+                }
+//                Greeting(
+//                    null,
+//                    name = "Android",
+//                    modifier = Modifier.fillMaxSize()
+//                )
+
 
             }
         }
@@ -67,6 +95,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(
+    navController: NavController?,
     name: String,
     modifier: Modifier = Modifier,
     viewModel: UserViewModel = hiltViewModel()
@@ -77,8 +106,8 @@ fun Greeting(
     }
     var text by remember { mutableStateOf("") }
 
-    val bgIds = remember { mutableStateListOf(R.drawable.bg1, R.drawable.bg2, R.drawable.bg3) }
-
+    //val bgIds = remember { mutableStateListOf(R.drawable.bg1, R.drawable.bg2, R.drawable.bg3) }
+    val bgIds = remember { mutableStateListOf(R.drawable.bg1) }
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
@@ -96,18 +125,19 @@ fun Greeting(
         // 2. 悬浮按钮（默认右下角）
         FloatingActionButton(
             onClick = {
-                viewModel.fetchUser(1)
+                //viewModel.fetchUser(1)
+                navController?.navigate("settings")
                 Log.w(TAG, "Greeting: ")
 
             },
             modifier = Modifier
                 .size(64.dp)
                 .align(Alignment.BottomEnd),
-            shape = CircleShape, // 圆形
+            //shape = CircleShape, // 圆形
             containerColor = Color(0xFF2196F3), // 背景色
             contentColor = Color.White // 图标颜色
         ) {
-            Icon(Icons.Default.Edit, "编辑")
+            Icon(Icons.Default.Settings, "红包设置")
         }
     }
 
@@ -119,7 +149,7 @@ fun Greeting(
 @Composable
 fun GreetingPreview() {
     MyApplicationTheme {
-        Greeting("Android")
+        Greeting(null, "Android")
     }
 }
 
